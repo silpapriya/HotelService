@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  HotelApiService-deployment
+  labels:
+    app:  HotelApiService
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  HotelApiService  
+  template:
+    metadata:
+      labels:
+        app: HotelApiService
+    spec:
+      containers:
+      - name: MyDNAzureCR0905
+        image: mydnazurecr0705.azurecr.io/azurecontainerrepo:latest
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: webapisvcsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name:  HotelApiServicesvc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app:  HotelApiService
