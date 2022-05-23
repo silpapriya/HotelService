@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HotelApiService.Models;
+using HotelApiService.Repository;
 
 namespace HotelApiService.Controllers
 {
@@ -14,14 +15,47 @@ namespace HotelApiService.Controllers
     {
         public IActionResult Get()
         {
-            var roomList = new List<Hotel>() {
-                new Hotel(){HotelId=100,  HotelName="ABC",  HotelAddress="Pippari Chichwad, Pune", City="Pune", State="Maharashtra", PinCode="411000", IsActive="Available" },
-                 new Hotel(){HotelId=101,  HotelName="PQR",  HotelAddress="Mumbai Bandra", City="Mumbai", State="Maharashtra", PinCode="411222", IsActive="Available" },
-                  new Hotel(){HotelId=100,  HotelName="XYZ",  HotelAddress="Nampalli Hydrabad", City="Hydrabad", State="Maharashtra", PinCode="411333", IsActive="Available" }
+            List<Hotel> hotels = HotelRepository.GetHotels();
 
-            };
 
-            return Ok(roomList);
+            return Ok(hotels);
+           
+        }
+         public IActionResult Get(int id)
+        {
+
+            var hotel = hotels.SingleOrDefault(x => x.HotelId == id);
+            if (hotel == null)
+            {
+                return NotFound("No hotel Found");
+            }
+            return Ok(hotel);
+        }
+        [HttpPost]
+        public IActionResult Addhotel(Hotel hotel)
+        {
+            hotels.Add(hotel);
+            if (hotels.Count == 0)
+            {
+                return NotFound("No List Found");
+            }
+            return Ok(hotels);
+        }
+        [HttpDelete]
+
+        public IActionResult Delete(int id)
+        {
+            var hotel = hotels.SingleOrDefault(x => x.HotelId == id);
+            if (hotel == null)
+            {
+                return NotFound("No hotel Found");
+            }
+            hotels.Remove(hotel);
+            if (hotels.Count == 0)
+            {
+                return NotFound("No List Found");
+            }
+            return Ok(hotels);
         }
     }
 }
